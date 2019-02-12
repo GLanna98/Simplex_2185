@@ -19,9 +19,9 @@ void MyMesh::GenerateCircle(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 
 	std::vector<vector3> tempList;
 
-	for (size_t i = 0; i < a_nSubdivisions; i++)
+	for (size_t i = 0; i < a_nSubdivisions+1; i++)
 	{
-		float angle = 360.0f / a_nSubdivisions;
+		float angle = 2.0f*PI / a_nSubdivisions;
 		float xPos = (cos(angle*i)*a_fRadius);
 		float yPos = (sin(angle*i)*a_fRadius);
 		tempList.push_back(vector3(xPos, yPos, 0.0f));
