@@ -18,13 +18,18 @@ void MyMesh::GenerateCircle(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	*/
 
 	std::vector<vector3> tempList;
-	tempList.push_back(vector3(0.5f + a_fRadius, 0.5f, 0));
 
 	for (size_t i = 0; i < a_nSubdivisions; i++)
 	{
 		float angle = 360.0f / a_nSubdivisions;
-		float xPos = 0.5f + (cos(angle)*a_fRadius);
-		float yPos = 0.5f + (sin(angle)*a_fRadius);
+		float xPos = (cos(angle*i)*a_fRadius);
+		float yPos = (sin(angle*i)*a_fRadius);
+		tempList.push_back(vector3(xPos, yPos, 0.0f));
+	}
+
+	for (size_t i = 1; i < tempList.size(); i++)
+	{
+		AddTri(tempList[i-1], tempList[i], vector3(0.0f, 0.0f, 0.0f));
 	}
 
 	// Adding information about color
