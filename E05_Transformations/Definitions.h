@@ -20,6 +20,8 @@ using namespace Simplex;
 #include "SFML\Graphics.hpp"
 #include "SFML\OpenGL.hpp"
 
+#include <vector>
+
 #endif //__DEFINITIONS_H_
 
 /*
