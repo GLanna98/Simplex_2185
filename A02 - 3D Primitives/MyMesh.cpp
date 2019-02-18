@@ -275,8 +275,25 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// My Code
+	std::vector<vector3> tempList;
+
+	for (size_t i = 0; i < a_nSubdivisions; i++)
+	{
+		float angle = 2.0f*PI / a_nSubdivisions;
+		float xPos = (cos(angle*i)*a_fRadius);
+		float zPos = (sin(angle*i)*a_fRadius);
+		tempList.push_back(vector3(xPos, 0.0f - (a_fHeight/2), zPos));
+	}
+
+	for (size_t i = 1; i < tempList.size(); i++)
+	{
+		AddTri(tempList[i - 1], tempList[i], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+		AddTri(tempList[i - 1],vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f), tempList[i]);
+	}
+	AddTri(tempList[tempList.size()-1], tempList[0], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+	AddTri(tempList[tempList.size()-1], vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f), tempList[0]);
+
 	// -------------------------------
 
 	// Adding information about color
@@ -300,7 +317,27 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	std::vector<vector3> tempList1;
+	std::vector<vector3> tempList2;
+
+	for (size_t i = 0; i < a_nSubdivisions; i++)
+	{
+		float angle = 2.0f*PI / a_nSubdivisions;
+		float xPos = (cos(angle*i)*a_fRadius);
+		float zPos = (sin(angle*i)*a_fRadius);
+		tempList1.push_back(vector3(xPos, 0.0f - (a_fHeight / 2), zPos));
+		tempList2.push_back(vector3(xPos, 0.0f + (a_fHeight / 2), zPos));
+	}
+
+	for (size_t i = 1; i < tempList1.size(); i++)
+	{
+		AddTri(tempList1[i - 1], tempList1[i], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+		AddTri(tempList2[i], tempList2[i - 1], vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f));
+		AddQuad(tempList2[i - 1], tempList2[i], tempList1[i - 1], tempList1[i]);
+	}
+	AddTri(tempList1[tempList1.size() - 1], tempList1[0], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+	AddTri(tempList2[0], tempList2[tempList2.size() - 1], vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f));
+	AddQuad(tempList2[tempList2.size() - 1], tempList2[0], tempList1[tempList1.size() - 1], tempList1[0]);
 	// -------------------------------
 
 	// Adding information about color
@@ -330,7 +367,19 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	std::vector<vector3> tempList1;
+	std::vector<vector3> tempList2;
+	std::vector<vector3> tempList3;
+	std::vector<vector3> tempList4;
+
+	for (size_t i = 0; i < a_nSubdivisions; i++)
+	{
+		float angle = 2.0f*PI / a_nSubdivisions;
+		float xPos1 = (cos(angle*i)*a_fOuterRadius);
+		float zPos1 = (sin(angle*i)*a_fOuterRadius);
+		tempList1.push_back(vector3(xPos1, 0.0f - (a_fHeight / 2), zPos1));
+		tempList2.push_back(vector3(xPos1, 0.0f + (a_fHeight / 2), zPos1));
+	}
 	// -------------------------------
 
 	// Adding information about color
