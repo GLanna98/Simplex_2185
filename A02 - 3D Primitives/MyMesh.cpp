@@ -510,8 +510,6 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 		GenerateCube(a_fRadius * 2.0f, a_v3Color);
 		return;
 	}
-	if (a_nSubdivisions > 6)
-		a_nSubdivisions = 6;
 
 	Release();
 	Init();
@@ -575,15 +573,15 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	std::vector<vector3> bottomLoop = combinedCircles[combinedCircles.size()-1];
 	for (size_t i = 0; i < topLoop.size()-1; i++)
 	{
-		AddTri(topLoop[i], topLoop[i + 1], tempList[0]);
+		AddTri(topLoop[i + 1], topLoop[i], tempList[0]);
 	}
-	AddTri(topLoop[topLoop.size()-1], topLoop[0], tempList[0]);
+	AddTri(topLoop[0], topLoop[topLoop.size()-1], tempList[0]);
 
 	for (size_t i = 0; i < bottomLoop.size()-1; i++)
 	{
-		AddTri(bottomLoop[i + 1], bottomLoop[i], tempList[vSubdivisions / 2]);
+		AddTri(bottomLoop[i + 1], tempList[vSubdivisions / 2], bottomLoop[i]);
 	}
-	AddTri(bottomLoop[0], bottomLoop[bottomLoop.size() - 1], tempList[vSubdivisions / 2]);
+	AddTri(bottomLoop[0], tempList[vSubdivisions / 2], bottomLoop[bottomLoop.size() - 1]);
 
 	for (size_t i = 0; i < combinedCircles.size()-1; i++)
 	{
@@ -592,9 +590,9 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 
 		for (size_t j = 0; j < currentLoop.size()-1; j++)
 		{
-			AddQuad(nextLoop[j], nextLoop[j + 1], currentLoop[j], currentLoop[j + 1]);
+			AddQuad(currentLoop[j], currentLoop[j + 1], nextLoop[j], nextLoop[j + 1]);
 		}
-		AddQuad(nextLoop[currentLoop.size() - 1], nextLoop[0], currentLoop[currentLoop.size() - 1], currentLoop[0]);
+		AddQuad(currentLoop[currentLoop.size() - 1], currentLoop[0], nextLoop[currentLoop.size() - 1], nextLoop[0]);
 	}
 
 	//Holy crap this worked. I'm so sorry for creating this
