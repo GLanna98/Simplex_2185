@@ -22,6 +22,13 @@ void Application::InitVariables(void)
 	if(m_uOrbits < 1)
 		m_uOrbits = 7;
 
+	//Populate the vector to hold all the route counts for each path
+	for (size_t i = 0; i < m_uOrbits; i++)
+	{
+		static uint route = 0;
+		allRouteCounts.push_back(route);
+	}
+
 	float fSize = 1.0f; //initial size of orbits
 
 	//creating a color using the spectrum 
@@ -36,6 +43,17 @@ void Application::InitVariables(void)
 	{
 		vector3 v3Color = WaveLengthToRGB(uColor); //calculate color based on wavelength
 		m_shapeList.push_back(m_pMeshMngr->GenerateTorus(fSize, fSize - 0.1f, 3, i, v3Color)); //generate a custom torus and add it to the meshmanager
+
+		//create a vector to hold all the vertices of the current torus
+		std::vector<vector3> thisPath;
+		for (size_t j = 0; j < i; j++)
+		{
+			float xPos = cos(((2 * PI) / i)*j) * (fSize - 0.05f);
+			float yPos = sin(((2 * PI) / i)*j) * (fSize - 0.05f);
+			thisPath.push_back(vector3(xPos, yPos, 0.0f));
+		}
+		allPaths.push_back(thisPath); //add this path to the list of all paths
+
 		fSize += 0.5f; //increment the size for the next orbit
 		uColor -= static_cast<uint>(decrements); //decrease the wavelength
 	}
@@ -64,17 +82,60 @@ void Application::Display(void)
 	*/
 	//m4Offset = glm::rotate(IDENTITY_M4, 1.5708f, AXIS_Z);
 
+	//Get a timer
+	static float fTimer = 0;	//store the new timer
+	static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
+	fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
+
+	//get the timer for the lerp
+	float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+
+	//get a vector to hold all of the lerp info for each sphere
+	std::vector<vector3> allLerps;
+	for (size_t i = 0; i < m_uOrbits; i++)
+	{
+		//set the start and end paths
+		vector3 startPos = allPaths[i][allRouteCounts[i]];
+		vector3 endPos;
+
+		if (allRouteCounts[i] == allPaths[i].size() - 1)
+		{
+			endPos = allPaths[i][0];
+		}
+		else
+		{
+			endPos = allPaths[i][allRouteCounts[i] + 1];
+		}
+
+		//save the lerp
+		allLerps.push_back(glm::lerp(startPos, endPos, fPercentage));
+
+		//change the route counter if needed
+		if (fPercentage >= 1.0f)
+		{
+			if (allRouteCounts[i] == allPaths[i].size() - 1)
+			{
+				allRouteCounts[i] = 0;
+			}
+			else
+			{
+				allRouteCounts[i] += 1;
+			}
+			fTimer = m_pSystem->GetDeltaTime(uClock);
+		}
+	}
+
 	// draw a shapes
 	for (uint i = 0; i < m_uOrbits; ++i)
 	{
 		m_pMeshMngr->AddMeshToRenderList(m_shapeList[i], glm::rotate(m4Offset, 1.5708f, AXIS_X));
 
 		//calculate the current position
-		vector3 v3CurrentPos = ZERO_V3;
+		vector3 v3CurrentPos = allLerps[i];
 		matrix4 m4Model = glm::translate(m4Offset, v3CurrentPos);
 
 		//draw spheres
-		m_pMeshMngr->AddSphereToRenderList(m4Model * glm::scale(vector3(0.1)), C_WHITE);
+		m_pMeshMngr->AddSphereToRenderList(m4Model * glm::scale(vector3(0.15)), C_WHITE);
 	}
 
 	//render list call
