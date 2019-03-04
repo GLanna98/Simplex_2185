@@ -45,6 +45,11 @@ private:
 	ControllerInput* m_pController[8]; //Controller
 	uint m_uActCont = 0; //Active Controller of the Application
 
+	std::vector<std::vector<vector3>> allPaths; //vector to hold all different paths
+
+	std::vector<uint> allRouteCounts;//vector to hold all the route counts for each path
+
+
 public:
 #pragma region Constructor / Run / Destructor
 	/*

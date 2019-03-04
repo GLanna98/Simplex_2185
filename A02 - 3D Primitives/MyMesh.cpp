@@ -275,8 +275,25 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// My Code
+	std::vector<vector3> tempList;
+
+	for (size_t i = 0; i < a_nSubdivisions; i++)
+	{
+		float angle = 2.0f*PI / a_nSubdivisions;
+		float xPos = (cos(angle*i)*a_fRadius);
+		float zPos = (sin(angle*i)*a_fRadius);
+		tempList.push_back(vector3(xPos, 0.0f - (a_fHeight/2), zPos));
+	}
+
+	for (size_t i = 1; i < tempList.size(); i++)
+	{
+		AddTri(tempList[i - 1], tempList[i], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+		AddTri(tempList[i - 1],vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f), tempList[i]);
+	}
+	AddTri(tempList[tempList.size()-1], tempList[0], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+	AddTri(tempList[tempList.size()-1], vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f), tempList[0]);
+
 	// -------------------------------
 
 	// Adding information about color
@@ -300,7 +317,27 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	std::vector<vector3> tempList1;
+	std::vector<vector3> tempList2;
+
+	for (size_t i = 0; i < a_nSubdivisions; i++)
+	{
+		float angle = 2.0f*PI / a_nSubdivisions;
+		float xPos = (cos(angle*i)*a_fRadius);
+		float zPos = (sin(angle*i)*a_fRadius);
+		tempList1.push_back(vector3(xPos, 0.0f - (a_fHeight / 2), zPos));
+		tempList2.push_back(vector3(xPos, 0.0f + (a_fHeight / 2), zPos));
+	}
+
+	for (size_t i = 1; i < tempList1.size(); i++)
+	{
+		AddTri(tempList1[i - 1], tempList1[i], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+		AddTri(tempList2[i], tempList2[i - 1], vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f));
+		AddQuad(tempList2[i - 1], tempList2[i], tempList1[i - 1], tempList1[i]);
+	}
+	AddTri(tempList1[tempList1.size() - 1], tempList1[0], vector3(0.0f, 0.0f - (a_fHeight / 2), 0.0f));
+	AddTri(tempList2[0], tempList2[tempList2.size() - 1], vector3(0.0f, 0.0f + (a_fHeight / 2), 0.0f));
+	AddQuad(tempList2[tempList2.size() - 1], tempList2[0], tempList1[tempList1.size() - 1], tempList1[0]);
 	// -------------------------------
 
 	// Adding information about color
@@ -330,7 +367,39 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	std::vector<vector3> tempList1; //outside top
+	std::vector<vector3> tempList2; //outside bottom
+	std::vector<vector3> tempList3; //inside top
+	std::vector<vector3> tempList4; //inside bottom
+
+	for (size_t i = 0; i < a_nSubdivisions; i++)
+	{
+		float angle = 2.0f*PI / a_nSubdivisions;
+		float xPosO = (cos(angle*i)*a_fOuterRadius);
+		float zPosO = (sin(angle*i)*a_fOuterRadius);
+		float xPosI = (cos(angle*i)*a_fInnerRadius);
+		float zPosI = (sin(angle*i)*a_fInnerRadius);
+		float yTop = 0.0f + (a_fHeight / 2);
+		float yBot = 0.0f - (a_fHeight / 2);
+
+		tempList1.push_back(vector3(xPosO, yTop, zPosO));
+		tempList2.push_back(vector3(xPosO, yBot, zPosO));
+		tempList3.push_back(vector3(xPosI, yTop, zPosI));
+		tempList4.push_back(vector3(xPosI, yBot, zPosI));
+	}
+
+	for (size_t i = 0; i < tempList1.size() - 1; i++)
+	{
+		AddQuad(tempList1[i], tempList1[i + 1], tempList2[i], tempList2[i + 1]);
+		AddQuad(tempList2[i], tempList2[i + 1], tempList4[i], tempList4[i + 1]);
+		AddQuad(tempList4[i], tempList4[i + 1], tempList3[i], tempList3[i + 1]);
+		AddQuad(tempList3[i], tempList3[i + 1], tempList1[i], tempList1[i + 1]);
+	}
+	AddQuad(tempList1[tempList1.size() - 1], tempList1[0], tempList2[tempList1.size() - 1], tempList2[0]);
+	AddQuad(tempList2[tempList1.size() - 1], tempList2[0], tempList4[tempList1.size() - 1], tempList4[0]);
+	AddQuad(tempList4[tempList1.size() - 1], tempList4[0], tempList3[tempList1.size() - 1], tempList3[0]);
+	AddQuad(tempList3[tempList1.size() - 1], tempList3[0], tempList1[tempList1.size() - 1], tempList1[0]);
+
 	// -------------------------------
 
 	// Adding information about color
@@ -362,7 +431,68 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	
+	//Ok, so after that whole sphere thing, we can make this in an even more convoluted way.
+	//A torus is basically a circle where instead of vertices, we have other circles that connect to each other like cylinders
+	//So first, let's create a reference circle
+
+	std::vector<vector3> refCircle;
+
+	//And again, make a vector of vector3 vectors. You'll get why in a bit.
+	std::vector<std::vector<vector3>> torus;
+
+	//Also, let's make sure we know what radii we are using
+	float loopRadius = a_fOuterRadius - a_fInnerRadius / 2;
+	float torusRadius = a_fInnerRadius + loopRadius;
+
+	for (size_t i = 0; i < a_nSubdivisionsA; i++)
+	{
+		float innerAngle = (2 * PI / a_nSubdivisionsA) * i;
+		float xPos = torusRadius * cos(innerAngle);
+		float yPos = 0.0f;
+		float zPos = torusRadius * sin(innerAngle);
+		refCircle.push_back(vector3(xPos, yPos, zPos));
+
+		//Now, all I have to do is create a vertical circle centered on each of the vertices of the refCircle.
+		//However, I need to calculate the angles so that the outer circles are placed correctly.
+
+		//so first let's start making the outer circles
+		std::vector<vector3> outerCircle;
+		for (size_t i = 0; i < a_nSubdivisionsB; i++)
+		{
+			float outerAngle = (2 * PI / a_nSubdivisionsB) * i;
+
+			//So this is what the circles would look like if i didn't have to rotate them based on their position on the torus
+			float fakeX = loopRadius * sin(outerAngle) + xPos;
+			float fakeY = loopRadius * cos(outerAngle) + yPos;
+			float fakeZ = 0.0f + zPos;
+
+			//But, I need to rotate these circles on the y-axis, so we'll do some math to calculate the real x and z positions
+			float trueX = fakeX * cos(innerAngle) + fakeZ * sin(innerAngle);
+			float trueY = loopRadius * cos(outerAngle);
+			float trueZ = fakeZ * cos(innerAngle) - fakeX * sin(innerAngle);
+
+			outerCircle.push_back(vector3(trueX, yPos, trueZ));
+		}
+
+		//push the created circles to the torus vector vector
+		torus.push_back(outerCircle);
+	}
+
+	//Now we should have all the vertices in place, so let's just connect them
+	for (size_t i = 0; i < a_nSubdivisionsA-2; i++)
+	{
+		std::vector<vector3> currentCircle = torus[i];
+		std::vector<vector3> nextCircle = torus[i + 1];
+		for (size_t j = 0; j < a_nSubdivisionsB-2; j++)
+		{
+			AddQuad(currentCircle[j], nextCircle[j], currentCircle[j + 1], nextCircle[j + 1]);
+		}
+		AddQuad(currentCircle[a_nSubdivisionsB-1], nextCircle[a_nSubdivisionsB - 1], currentCircle[0], nextCircle[0]);
+	}
+	
+	//this one didn't work. Oh well.
+
 	// -------------------------------
 
 	// Adding information about color
@@ -375,19 +505,98 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 		a_fRadius = 0.01f;
 
 	//Sets minimum and maximum of subdivisions
-	if (a_nSubdivisions < 1)
+	if (a_nSubdivisions < 4)
 	{
 		GenerateCube(a_fRadius * 2.0f, a_v3Color);
 		return;
 	}
-	if (a_nSubdivisions > 6)
-		a_nSubdivisions = 6;
 
 	Release();
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	
+	//Ok, let's think about this. A sphere would basically be a pile of circles up to down connected together.
+	//so, if i create a big vertical circle with the nearest even number of subdivisions, I might be able to figure out the radius for each of the circles in the pile
+	int vSubdivisions = round(a_nSubdivisions / 2.0f) * 2;
+
+	//Nice, so now I'll just create a vertical circle and see what's the radii of each of the paralel vertices
+	std::vector<vector3> tempList;
+
+	for (size_t i = 0; i < vSubdivisions; i++)
+	{
+		float angle = (2 * PI / vSubdivisions) * i;
+		float xPos = a_fRadius * sin(angle);
+		float yPos = a_fRadius * cos(angle);
+		float zPos = 0.0f;
+		tempList.push_back(vector3(xPos, yPos, zPos));
+	}
+
+	//Ok. So now we have a circle. Now, each of the subdivisions except for the middle two have somewhere to match with.
+	//The one after the first one is the same height as the last one, the one after it is next to the second to last...
+	//So how do I figure this out? if it has 8 vertical subdivisions, the matches would be like this:
+	/*
+	    0
+	  1   7
+	 2     6
+	  3   5
+	    4
+	*/
+	//So the matching vectors are i and vSubdivisions-i. If vSubdivisions-i == vSubdivisions, then that one has no pair.
+	//Now let's get crazy for a moment, and create a vector of vector3 vectors. That make sense? No? Cool.
+	std::vector<std::vector<vector3>> combinedCircles;
+
+	for (size_t i = 1; i < vSubdivisions/2; i++)
+	{
+		//So let's get the radius of the smaller circle
+		vector3 v1 = tempList[i];
+		vector3 v2 = tempList[vSubdivisions-i];
+		float radius = sqrt((pow((v1[0] - v2[0]), 2) + pow((v1[1] - v2[1]), 2) + pow((v1[2] - v2[2]), 2)))/2;
+
+		//now that we have this, let's create a vector to hold each circle
+		std::vector<vector3> innerCircle;
+		for (size_t i = 0; i < a_nSubdivisions; i++)
+		{
+			float angle = (2 * PI / a_nSubdivisions) * i;
+			float xPos = radius * cos(angle);
+			float yPos = v1[1];
+			float zPos = radius * sin(angle);
+			innerCircle.push_back(vector3(xPos, yPos, zPos));
+		}
+		combinedCircles.push_back(innerCircle);
+	}
+
+	//Alright, so that got confusing, but basically we now have a vector that hold the different sub-circles that are used to make the larger circle
+	//Now, all we have to do is connect the circles together and connect the top and bottom circles to tempList[0] and tempList[vSubdivisions/2]
+
+	std::vector<vector3> topLoop = combinedCircles[0];
+	std::vector<vector3> bottomLoop = combinedCircles[combinedCircles.size()-1];
+	for (size_t i = 0; i < topLoop.size()-1; i++)
+	{
+		AddTri(topLoop[i + 1], topLoop[i], tempList[0]);
+	}
+	AddTri(topLoop[0], topLoop[topLoop.size()-1], tempList[0]);
+
+	for (size_t i = 0; i < bottomLoop.size()-1; i++)
+	{
+		AddTri(bottomLoop[i + 1], tempList[vSubdivisions / 2], bottomLoop[i]);
+	}
+	AddTri(bottomLoop[0], tempList[vSubdivisions / 2], bottomLoop[bottomLoop.size() - 1]);
+
+	for (size_t i = 0; i < combinedCircles.size()-1; i++)
+	{
+		std::vector<vector3> currentLoop = combinedCircles[i];
+		std::vector<vector3> nextLoop = combinedCircles[i + 1];
+
+		for (size_t j = 0; j < currentLoop.size()-1; j++)
+		{
+			AddQuad(currentLoop[j], currentLoop[j + 1], nextLoop[j], nextLoop[j + 1]);
+		}
+		AddQuad(currentLoop[currentLoop.size() - 1], currentLoop[0], nextLoop[currentLoop.size() - 1], nextLoop[0]);
+	}
+
+	//Holy crap this worked. I'm so sorry for creating this
+
 	// -------------------------------
 
 	// Adding information about color
