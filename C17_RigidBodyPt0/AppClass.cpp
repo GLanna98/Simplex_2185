@@ -42,7 +42,7 @@ void Application::Update(void)
 
 	//Set model matrix to the creeper
 	m_pCreeper->SetModelMatrix(glm::translate(m_v3Creeper) * ToMatrix4(m_qArcBall));
-	//m_pModelRB->SetModelMatrix(glm::translate(m_v3Creeper) * ToMatrix4(m_qArcBall));
+	m_pCreeperRB->SetModelMatrix(glm::translate(m_v3Creeper) * ToMatrix4(m_qArcBall));
 	
 	//Set model matrix to Steve
 	matrix4 mSteve = glm::translate(vector3(2.25f, 0.0f, 0.0f));
