@@ -397,43 +397,67 @@ void Application::ProcessKeyboard(void)
 		fSpeed *= 5.0f;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		m_v3Eye.z -= 0.1f;
 		m_pCameraMngr->MoveForward(fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		m_v3Eye.z += 0.1f;
 		m_pCameraMngr->MoveForward(-fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		m_v3Eye.x -= 0.1f;
 		m_pCameraMngr->MoveSideways(-fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		m_v3Eye.x += 0.1f;
 		m_pCameraMngr->MoveSideways(fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		m_v3Eye.y -= 0.1f;
 		m_pCameraMngr->MoveVertical(-fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+		m_v3Eye.y += 0.1f;
 		m_pCameraMngr->MoveVertical(fSpeed);
 #pragma endregion
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
 		if (fMultiplier)
+		{
+			m_qOrientation = m_qOrientation * glm::angleAxis(glm::radians(1.0f), AXIS_X);
 			m_v3Rotation.x -= 1.0f;
+		}
 		else
+		{
+			m_qOrientation = m_qOrientation * glm::angleAxis(glm::radians(-1.0f), AXIS_X);
 			m_v3Rotation.x += 1.0f;
+		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
 	{
 		if (fMultiplier)
+		{
+			m_qOrientation = m_qOrientation * glm::angleAxis(glm::radians(1.0f), AXIS_Y);
 			m_v3Rotation.y -= 1.0f;
+		}
 		else
+		{
+			m_qOrientation = m_qOrientation * glm::angleAxis(glm::radians(-1.0f), AXIS_Y);
 			m_v3Rotation.y += 1.0f;
+		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		if (fMultiplier)
+		{
+			m_qOrientation = m_qOrientation * glm::angleAxis(glm::radians(1.0f), AXIS_Z);
 			m_v3Rotation.z -= 1.0f;
+		}
 		else
+		{
+			m_qOrientation = m_qOrientation * glm::angleAxis(glm::radians(-1.0f), AXIS_Z);
 			m_v3Rotation.z += 1.0f;
+		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
