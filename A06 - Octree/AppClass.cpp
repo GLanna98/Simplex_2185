@@ -27,6 +27,23 @@ void Application::InitVariables(void)
 			vector3 v3Position = vector3(glm::sphericalRand(34.0f));
 			matrix4 m4Position = glm::translate(v3Position);
 			m_pEntityMngr->SetModelMatrix(m4Position);
+			/*m_pEntityMngr->AddDimension(-1, uIndex);
+			++uIndex;*//*
+
+			if (v3Position.x < 0.0f)
+			{
+				if (v3Position.x < -17.0f)
+					m_pEntityMngr->AddDimension(-1, 1);
+				else
+					m_pEntityMngr->AddDimension(-1, 2);
+			}
+			else if (v3Position.x > 0.0f)
+			{
+				if (v3Position.x > -17.0f)
+					m_pEntityMngr->AddDimension(-1, 3);
+				else
+					m_pEntityMngr->AddDimension(-1, 4);
+			}*/
 		}
 	}
 	m_uOctantLevels = 1;
@@ -45,6 +62,10 @@ void Application::Update(void)
 	
 	//Update Entity Manager
 	m_pEntityMngr->Update();
+
+	/*m_pMeshMngr->AddGridToRenderList(glm::rotate(IDENTITY_M4, (float)(PI/2.0f), AXIS_Y));
+	m_pMeshMngr->AddGridToRenderList(glm::translate(vector3(-17.0f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, (float)(PI / 2.0f), AXIS_Y));
+	m_pMeshMngr->AddGridToRenderList(glm::translate(vector3(17.0f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, (float)(PI / 2.0f), AXIS_Y));*/
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
