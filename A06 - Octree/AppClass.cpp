@@ -24,12 +24,30 @@ void Application::InitVariables(void)
 		{
 			uIndex++;
 			m_pEntityMngr->AddEntity("Minecraft\\Cube.obj");
-			vector3 v3Position = vector3(glm::sphericalRand(34.0f));
+			vector3 v3Position = vector3(glm::sphericalRand(m_fsphereRadius));
 			matrix4 m4Position = glm::translate(v3Position);
 			m_pEntityMngr->SetModelMatrix(m4Position);
+			/*m_pEntityMngr->AddDimension(-1, uIndex);
+			++uIndex;*//*
+
+			if (v3Position.x < 0.0f)
+			{
+				if (v3Position.x < -17.0f)
+					m_pEntityMngr->AddDimension(-1, 1);
+				else
+					m_pEntityMngr->AddDimension(-1, 2);
+			}
+			else if (v3Position.x > 0.0f)
+			{
+				if (v3Position.x > -17.0f)
+					m_pEntityMngr->AddDimension(-1, 3);
+				else
+					m_pEntityMngr->AddDimension(-1, 4);
+			}*/
 		}
 	}
 	m_uOctantLevels = 1;
+	m_pRoot = new MyOctant(m_uOctantLevels, 5);
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
@@ -45,6 +63,10 @@ void Application::Update(void)
 	
 	//Update Entity Manager
 	m_pEntityMngr->Update();
+
+	/*m_pMeshMngr->AddGridToRenderList(glm::rotate(IDENTITY_M4, (float)(PI/2.0f), AXIS_Y));
+	m_pMeshMngr->AddGridToRenderList(glm::translate(vector3(-17.0f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, (float)(PI / 2.0f), AXIS_Y));
+	m_pMeshMngr->AddGridToRenderList(glm::translate(vector3(17.0f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, (float)(PI / 2.0f), AXIS_Y));*/
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
