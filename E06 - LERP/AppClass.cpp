@@ -53,13 +53,75 @@ void Application::Display(void)
 
 	//calculate the current position
 	vector3 v3CurrentPos;
-	
 
+	vector3 v3Start;
+	vector3 v3End;
 
+	static uint route = 0;
+
+	switch (route)
+	{
+	case 0:
+		v3Start = vector3(0, 0, 0);
+		v3End = m_stopsList[0];
+		break;
+	case 1:
+		v3Start = m_stopsList[0];
+		v3End = m_stopsList[1];
+		break;
+	case 2:
+		v3Start = m_stopsList[1];
+		v3End = m_stopsList[2];
+		break;
+	case 3:
+		v3Start = m_stopsList[2];
+		v3End = m_stopsList[3];
+		break;
+	case 4:
+		v3Start = m_stopsList[3];
+		v3End = m_stopsList[4];
+		break;
+	case 5:
+		v3Start = m_stopsList[4];
+		v3End = m_stopsList[5];
+		break;
+	case 6:
+		v3Start = m_stopsList[5];
+		v3End = m_stopsList[6];
+		break;
+	case 7:
+		v3Start = m_stopsList[6];
+		v3End = m_stopsList[7];
+		break;
+	case 8:
+		v3Start = m_stopsList[7];
+		v3End = m_stopsList[8];
+		break;
+	case 9:
+		v3Start = m_stopsList[8];
+		v3End = m_stopsList[9];
+		break;
+	case 10:
+		v3Start = m_stopsList[9];
+		v3End = m_stopsList[10];
+		break;
+	}
 
 
 	//your code goes here
-	v3CurrentPos = vector3(0.0f, 0.0f, 0.0f);
+	
+	float fPercentage = MapValue(fTimer, 0.0f, 3.0f, 0.0f, 1.0f);
+
+	v3CurrentPos = glm::lerp(v3Start, v3End, fPercentage);
+
+	if (fPercentage >= 1.0f)
+	{
+		route++;
+		fTimer = m_pSystem->GetDeltaTime(uClock);
+	}
+
+	
+
 	//-------------------
 	
 
