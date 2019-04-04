@@ -276,16 +276,94 @@ void MyRigidBody::AddToRenderList(void)
 
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
-	/*
-	Your code goes here instead of this comment;
+	//distances from the objects' center points to the current furtherst point in the current test
+	float ra, rb;
+	
+	//Rotation matrices used for the calculations.
+	matrix3 R;
+	matrix3 AbsR;
 
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
+	//get the local xyz axes for the two objects into vectors
+	vector3 a_axis[3] = { GetModelMatrix()[0], GetModelMatrix()[1], GetModelMatrix()[2] };
+	vector3 b_axis[3] = { a_pOther->GetModelMatrix()[0], a_pOther->GetModelMatrix()[1], a_pOther->GetModelMatrix()[2] };
+
+	//Calculate the rotation matrix by using the dot product of each of the axes of the two objects
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			R[i][j] = glm::dot(a_axis[i], b_axis[j]);
+
+	//Calculate the translation vector by simply getting the separation of the two objects' center vectors
+	vector3 t = a_pOther->GetCenterGlobal() - this->GetCenterGlobal();
+
+	// Bring translation into a's coordinate frame
+	t = vector3(glm::dot(t, a_axis[0]), glm::dot(t, a_axis[1]), glm::dot(t, a_axis[2]));
+
+	//Calculate the absolute rotation matrix, adding epsilon to avoid errors when the edges are parallel to each other (cross product of paralel vertices is null)
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			AbsR[i][j] = abs(R[i][j]) + FLT_EPSILON;
+
+	//Now is when the tests start. The way they work is by checking if there can be a plane between the two objects based on the test axis
+
+	//Test for the first object's x, y and z axis
+	for (int i = 0; i < 3; i++) {
+		ra = this->GetHalfWidth()[i];
+		rb = a_pOther->GetHalfWidth()[0] * AbsR[i][0] + a_pOther->GetHalfWidth()[1] * AbsR[i][1] + a_pOther->GetHalfWidth()[2] * AbsR[i][2];
+		if (abs(t[i]) > ra + rb) return 0;
+	}
+
+	//Test for the second object's x, y and z axis
+	for (int i = 0; i < 3; i++) {
+		ra = this->GetHalfWidth()[0] * AbsR[0][i] + this->GetHalfWidth()[1] * AbsR[1][i] + this->GetHalfWidth()[2] * AbsR[2][i];
+		rb = a_pOther->GetHalfWidth()[i];
+		if (abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return 0;
+	}
+
+	//Test for the cross product between the two object's x axis
+	ra = this->GetHalfWidth()[1] * AbsR[2][0] + this->GetHalfWidth()[2] * AbsR[1][0];
+	rb = a_pOther->GetHalfWidth()[1] * AbsR[0][2] + a_pOther->GetHalfWidth()[2] * AbsR[0][1];
+	if (abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's x and the second object's y
+	ra = this->GetHalfWidth()[1] * AbsR[2][1] + this->GetHalfWidth()[2] * AbsR[1][1];
+	rb = a_pOther->GetHalfWidth()[0] * AbsR[0][2] + a_pOther->GetHalfWidth()[2] * AbsR[0][0];
+	if (abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's x and the second object's z
+	ra = this->GetHalfWidth()[1] * AbsR[2][2] + this->GetHalfWidth()[2] * AbsR[1][2];
+	rb = a_pOther->GetHalfWidth()[0] * AbsR[0][1] + a_pOther->GetHalfWidth()[1] * AbsR[0][0];
+	if (abs(t[2] * R[1][2] - t[1] * R[2][2]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's y and the second object's x
+	ra = this->GetHalfWidth()[0] * AbsR[2][0] + this->GetHalfWidth()[2] * AbsR[0][0];
+	rb = a_pOther->GetHalfWidth()[1] * AbsR[1][2] + a_pOther->GetHalfWidth()[2] * AbsR[1][1];
+
+	if (abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's y and the second object's y
+	ra = this->GetHalfWidth()[0] * AbsR[2][1] + this->GetHalfWidth()[2] * AbsR[0][1];
+	rb = a_pOther->GetHalfWidth()[0] * AbsR[1][2] + a_pOther->GetHalfWidth()[2] * AbsR[1][0];
+	if (abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's y and the second object's z
+	ra = this->GetHalfWidth()[0] * AbsR[2][2] + this->GetHalfWidth()[2] * AbsR[0][2];
+	rb = a_pOther->GetHalfWidth()[0] * AbsR[1][1] + a_pOther->GetHalfWidth()[1] * AbsR[1][0];
+	if (abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's z and the second object's x
+	ra = this->GetHalfWidth()[0] * AbsR[1][0] + this->GetHalfWidth()[1] * AbsR[0][0];
+	rb = a_pOther->GetHalfWidth()[1] * AbsR[2][2] + a_pOther->GetHalfWidth()[2] * AbsR[2][1];
+	if (abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's z and the second object's y
+	ra = this->GetHalfWidth()[0] * AbsR[1][1] + this->GetHalfWidth()[1] * AbsR[0][1];
+	rb = a_pOther->GetHalfWidth()[0] * AbsR[2][2] + a_pOther->GetHalfWidth()[2] * AbsR[2][0];
+	if (abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return 0;
+
+	//Test for the cross product between the first object's z and the second object's z
+	ra = this->GetHalfWidth()[0] * AbsR[1][2] + this->GetHalfWidth()[1] * AbsR[0][2];
+	rb = a_pOther->GetHalfWidth()[0] * AbsR[2][1] + a_pOther->GetHalfWidth()[1] * AbsR[2][0];
+	if (abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return 0;
 
 	//there is no axis test that separates this two objects
 	return eSATResults::SAT_NONE;
