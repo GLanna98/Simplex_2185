@@ -25,7 +25,7 @@ vector3 Simplex::MyOctant::GetCenter(void) { return m_v3Center; }
 vector3 Simplex::MyOctant::GetMin(void) { return m_v3Min; }
 vector3 Simplex::MyOctant::GetMax(void) { return m_v3Max; }
 //The Big 3
-Simplex::MyOctant::MyOctant(uint a_uLevels, uint a_EntityCount)
+Simplex::MyOctant::MyOctant(void)
 {
 
 }
@@ -59,3 +59,8 @@ MyOctant & Simplex::MyOctant::operator=(MyOctant const & other)
 }
 Simplex::MyOctant::~MyOctant(void) { Release(); }
 //Other Methods
+
+Simplex::MyOctant::MyOctant(uint a_uLevel, uint a_uEntityCount)
+{
+
+}

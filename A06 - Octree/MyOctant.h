@@ -36,11 +36,11 @@ class MyOctant
 
 public:
 	/*
-	Usage: Constructor
-	Arguments: std::vector<vector3> a_pointList -> list of points to make the Rigid Body for
+	Usage: Default Constructor
+	Arguments: a_uEntityCount -> Describes the desired count of entities in each octant
 	Output: class object instance
 	*/
-	MyOctant(uint a_uLevels, uint a_EntityCount);
+	MyOctant(void);
 	/*
 	Usage: Copy Constructor
 	Arguments: class object to copy
@@ -65,6 +65,12 @@ public:
 	Output: ---
 	*/
 	void Swap(MyOctant& other);
+	/*
+		Usage: Constructor (Using current level and desired entity count as parameters)
+		Arguments: a_uLevel -> to define what is the level of the current octant --- a_uEntityCount -> Describes the desired count of entities in each octant
+		Output: class object instance
+		*/
+	MyOctant(uint a_uLevel, uint a_uEntityCount);
 
 #pragma region Accessors
 	/*
