@@ -2,6 +2,7 @@
 #define __MYOCTANT_H_
 
 #include "MyEntityManager.h"
+#include"Simplex/Physics/Octant.h"
 
 namespace Simplex
 {
@@ -29,18 +30,28 @@ class MyOctant
 	MyOctant* m_pParent = nullptr; //Will store the parent of the current octant
 	MyOctant* m_pChild[8]; //Will store the children of the current octant
 
-	std::vector<uint> m_EntityList; //List of Entitites under this octant (Index in Entity Manager)
+	std::vector<uint> m_lEntityList; //List of Entitites under this octant (Index in Entity Manager)
 
 	MyOctant* m_pRoot = nullptr; //Root octant
 	std::vector<MyOctant*> m_lChild; //list of nodes that contain objects (this will be applied to root only)
 
 public:
 	/*
-	Usage: Default Constructor
-	Arguments: a_uEntityCount -> Describes the desired count of entities in each octant
+	Usage: Constructor (Using current level and desired entity count as parameters)
+	Arguments: 
+	- a_uMaxLevel -> Max level of subdivision
+	- a_uIdealEntityCount -> Describes the desired count of entities in each octant
 	Output: class object instance
 	*/
-	MyOctant(void);
+	MyOctant(uint a_uMaxLevel = 2, uint a_uIdealEntityCount = 5);
+	/*
+	Usage: Constructor (Using center and size as parameters)
+	Arguments:
+	- a_v3Center -> Center vector of the octant
+	- a_fSize -> Size of each edge of the octant
+	Output: class object instance
+	*/
+	MyOctant(vector3 a_v3Center, float a_fSize);
 	/*
 	Usage: Copy Constructor
 	Arguments: class object to copy
@@ -65,62 +76,14 @@ public:
 	Output: ---
 	*/
 	void Swap(MyOctant& other);
-	/*
-		Usage: Constructor (Using current level and desired entity count as parameters)
-		Arguments: a_uLevel -> to define what is the level of the current octant --- a_uEntityCount -> Describes the desired count of entities in each octant
-		Output: class object instance
-		*/
-	MyOctant(uint a_uLevel, uint a_uEntityCount);
 
 #pragma region Accessors
-	/*
-	Usage: Gets ID of octant
-	Arguments: ---
-	Output: ID
-	*/
-	uint GetID(void);
-	/*
-	Usage: Sets ID of octant
-	Arguments: uint a_uID -> ID to set
-	Output: ---
-	*/
-	void SetID(uint a_uID);
-	/*
-	Usage: Gets level of octant
-	Arguments: ---
-	Output: Level
-	*/
-	uint GetLevel(void);
-	/*
-	Usage: Sets level of octant
-	Arguments: uint a_uLevel -> Level to set
-	Output: ---
-	*/
-	void SetLevel(uint a_uLevel);
-	/*
-	Usage: Gets the octant's children count
-	Arguments: ---
-	Output: Children Count (either 0 or 8)
-	*/
-	uint GetChildren(void);
-	/*
-	Usage: Sets the octant's children count
-	Arguments: uint a_uChildren -> Children count to set
-	Output: ---
-	*/
-	void SetChildren(uint a_uChildren);
 	/*
 	Usage: Gets the size of the octant
 	Arguments: ---
 	Output: Size
 	*/
 	float GetSize(void);
-	/*
-	Usage: Sets the size of the octant
-	Arguments: float a_fSize -> Size to set to the octant
-	Output: ---
-	*/
-	void SetSize(float a_fSize);
 	/*
 	Usage: Gets the center vector of the octant
 	Arguments: ---
@@ -143,14 +106,91 @@ public:
 
 #pragma region Methods
 	/*
-	Usage: Splits the current Octree into 8, adding them to the children array
-	Arguments: uint a_uID -> Id of the current octant, so that the children have the correct ID
+	Usage: Check if there is a specified entity inside the octant
+	Arguments: uint a_uRBIndex -> Id of the entity in the entity manager
+	Output: if there is a collision
+	*/
+	bool IsColliding(uint a_uRBIndex);
+	/*
+	Usage: Display the octant by index
+	Arguments: 
+	- uint a_uIndex -> Octant to display
+	- vectore3 a_v3Color -> Color of the octant
 	Output: ---
 	*/
-	void SplitIntoOctants(uint a_uID)
-	{
-
-	}
+	void Display(uint a_uIndex, vector3 a_v3Color = C_YELLOW);
+	/*
+	Usage: Display the octant
+	Arguments: vector3 a_v3Color -> Color of the octant
+	Output: ---
+	*/
+	void Display(vector3 a_v3Color = C_YELLOW);
+	/*
+	Usage: Display the non-empty leafs (no subdivisions) in the octree
+	Arguments: vector3 a_v3Color -> Color of the octant
+	Output: ---
+	*/
+	void DisplayLeafs(vector3 a_v3Color = C_YELLOW);
+	/*
+	Usage: Clear the entity list for each node
+	Arguments: ---
+	Output: ---
+	*/
+	void ClearEntityList(void);
+	/*
+	Usage: Creates 8 new octants as children of this one
+	Arguments: ---
+	Output: ---
+	*/
+	void Subdivide(uint a_uRBIndex);
+	/*
+	Usage: Get the specified child of this octant from the array
+	Arguments:uint a_uChild -> Index of child in child array
+	Output: the octant object for the child
+	*/
+	MyOctant* GetChild(uint a_uChild);
+	/*
+	Usage: Get the parent of this octant
+	Arguments: ---
+	Output: the octant object for the parent
+	*/
+	MyOctant* GetParent(void);
+	/*
+	Usage: Check if the octant is not subdivided
+	Arguments: ---
+	Output: It is a leaf (no children)
+	*/
+	bool IsLeaf(void);
+	/*
+	Usage: Check if the octant contains more than the specified entity count
+	Arguments: uint a_uEntities -> Number of entities to check
+	Output: It contains more than the specified amount of entities
+	*/
+	bool ContainsMoreThan(uint a_uEntities);
+	/*
+	Usage: Delete all of the octants in its lineage
+	Arguments: ---
+	Output: ---
+	*/
+	void KillBranches(void);
+	/*
+	Usage: Creates the tree
+	Arguments: Max level of tree when constructing
+	Output: ---
+	*/
+	void ConstructTree(uint a_uMaxLevel = 3);
+	/*
+	Usage: Go through all octants setting IDs to each entity in them
+	Arguments: ---
+	Output: ---
+	*/
+	void AssignIDtoEntity(void);
+	/*
+	Usage: Counts all octants
+	Arguments: ---
+	Output: ---
+	*/
+	uint GetOctantCount(void);
 
 #pragma endregion
 
@@ -167,6 +207,12 @@ private:
 	Output: ---
 	*/
 	void Init(void);
+	/*
+	Usage: Creates a list for all leafs that contain objects
+	Arguments: ---
+	Output: ---
+	*/
+	void ConstructList(void);
 };//class
 
 } //namespace Simplex

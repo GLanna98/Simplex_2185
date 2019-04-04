@@ -64,10 +64,6 @@ void Application::Update(void)
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 
-	/*m_pMeshMngr->AddGridToRenderList(glm::rotate(IDENTITY_M4, (float)(PI/2.0f), AXIS_Y));
-	m_pMeshMngr->AddGridToRenderList(glm::translate(vector3(-17.0f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, (float)(PI / 2.0f), AXIS_Y));
-	m_pMeshMngr->AddGridToRenderList(glm::translate(vector3(17.0f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, (float)(PI / 2.0f), AXIS_Y));*/
-
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
 }
@@ -77,7 +73,10 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	//m_pRoot->Display();
+	if (m_uOctantID == -1)
+		m_pRoot->Display();
+	else
+		m_pRoot->Display(m_uOctantID);
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
@@ -96,6 +95,9 @@ void Application::Display(void)
 }
 void Application::Release(void)
 {
+	//Release the octree
+	SafeDelete(m_pRoot);
+
 	//release GUI
 	ShutdownGUI();
 }
