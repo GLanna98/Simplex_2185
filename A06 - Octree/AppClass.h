@@ -10,7 +10,7 @@ Date: 2017/06
 #include "ControllerConfiguration.h"
 #include "imgui\ImGuiObject.h"
 
-#include "MyEntityManager.h"
+#include "MyOctant.h"
 
 namespace Simplex
 {
@@ -24,6 +24,8 @@ class Application
 	uint m_uOctantLevels = 0; //Number of levels in the octree
 private:
 	String m_sProgrammer = "Gabriel Lanna - gll1460@rit.edu"; //programmer
+
+	float m_fsphereRadius = 34.0f;
 
 	static ImGuiObject gui; //GUI object
 	bool m_bGUI_Main = true; //show Main GUI window?

@@ -40,7 +40,7 @@ public:
 	Arguments: std::vector<vector3> a_pointList -> list of points to make the Rigid Body for
 	Output: class object instance
 	*/
-	MyOctant(void);
+	MyOctant(uint a_uLevels, uint a_EntityCount);
 	/*
 	Usage: Copy Constructor
 	Arguments: class object to copy
@@ -133,6 +133,19 @@ public:
 	Output: Max
 	*/
 	vector3 GetMax(void);
+#pragma endregion
+
+#pragma region Methods
+	/*
+	Usage: Splits the current Octree into 8, adding them to the children array
+	Arguments: uint a_uID -> Id of the current octant, so that the children have the correct ID
+	Output: ---
+	*/
+	void SplitIntoOctants(uint a_uID)
+	{
+
+	}
+
 #pragma endregion
 
 private:

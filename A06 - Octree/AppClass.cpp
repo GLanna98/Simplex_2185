@@ -24,7 +24,7 @@ void Application::InitVariables(void)
 		{
 			uIndex++;
 			m_pEntityMngr->AddEntity("Minecraft\\Cube.obj");
-			vector3 v3Position = vector3(glm::sphericalRand(34.0f));
+			vector3 v3Position = vector3(glm::sphericalRand(m_fsphereRadius));
 			matrix4 m4Position = glm::translate(v3Position);
 			m_pEntityMngr->SetModelMatrix(m4Position);
 			/*m_pEntityMngr->AddDimension(-1, uIndex);
@@ -47,6 +47,7 @@ void Application::InitVariables(void)
 		}
 	}
 	m_uOctantLevels = 1;
+	m_pRoot = new MyOctant()
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
