@@ -1,8 +1,12 @@
+/*----------------------------------------------
+Programmer: Gabriel L'Huillier Lanna (gll1460@rit.edu)
+Date: March-April 2019
+The layout of this class was taken from Simplex/Physics/Octant.h
+----------------------------------------------*/
 #ifndef __MYOCTANT_H_
 #define __MYOCTANT_H_
 
 #include "MyEntityManager.h"
-#include"Simplex/Physics/Octant.h"
 
 namespace Simplex
 {
@@ -10,15 +14,15 @@ namespace Simplex
 //System Class
 class MyOctant
 {
-	static uint m_uOctantCount; //will store the number of octants instantiated
-	static uint m_uMaxLevel; //will store the maximum level an octant can go to
-	static uint m_uIdealEntityCount; //will tell how many ideal Entitites this object will contain
+	static uint ms_uOctantCount; //will store the number of octants instantiated
+	static uint ms_uMaxLevel; //will store the maximum level an octant can go to
+	static uint ms_uIdealEntityCount; //will tell how many ideal Entitites this object will contain
 
 	uint m_uID = 0; //Will store the current ID for this octant
 	uint m_uLevel = 0; //Will store the current level of the octant
 	uint m_uChildren = 0; //Number of children on the octant (either 0 or 8)
 
-	float m_fSize = 0.0f; //Size of the octant
+	//float m_fSize = 0.0f; //Size of the octant - replaced by m_v3HalfWidth
 
 	MeshManager* m_pMeshMngr = nullptr; //Mesh Manager Singleton
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Nabager Singleton
@@ -26,6 +30,7 @@ class MyOctant
 	vector3 m_v3Center = vector3(0.0f); //Will store the center point of the octant
 	vector3 m_v3Min = vector3(0.0f); //Will store the minimum vector of the octant
 	vector3 m_v3Max = vector3(0.0f); //Will hold the maximum vector of the octant
+	vector3 m_v3HalfWidth = vector3(0.0f); //Will hold the half size of the octant
 
 	MyOctant* m_pParent = nullptr; //Will store the parent of the current octant
 	MyOctant* m_pChild[8]; //Will store the children of the current octant
@@ -51,7 +56,7 @@ public:
 	- a_fSize -> Size of each edge of the octant
 	Output: class object instance
 	*/
-	MyOctant(vector3 a_v3Center, float a_fSize);
+	MyOctant(vector3 a_v3Center, vector3 a_v3HalfWidth);
 	/*
 	Usage: Copy Constructor
 	Arguments: class object to copy
@@ -79,11 +84,11 @@ public:
 
 #pragma region Accessors
 	/*
-	Usage: Gets the size of the octant
+	Usage: Gets the half width of the octant
 	Arguments: ---
-	Output: Size
+	Output: HalfWidth
 	*/
-	float GetSize(void);
+	vector3 GetHalfWidth(void);
 	/*
 	Usage: Gets the center vector of the octant
 	Arguments: ---
@@ -142,7 +147,7 @@ public:
 	Arguments: ---
 	Output: ---
 	*/
-	void Subdivide(uint a_uRBIndex);
+	void Subdivide(void);
 	/*
 	Usage: Get the specified child of this octant from the array
 	Arguments:uint a_uChild -> Index of child in child array
@@ -178,7 +183,7 @@ public:
 	Arguments: Max level of tree when constructing
 	Output: ---
 	*/
-	void ConstructTree(uint a_uMaxLevel = 3);
+	void ConstructTree(void);
 	/*
 	Usage: Go through all octants setting IDs to each entity in them
 	Arguments: ---
